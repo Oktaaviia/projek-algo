@@ -152,7 +152,7 @@ def lihat_riwayat_pembelian():
         lihat_riwayat_pembelian()
 
 def tampilkan_deskripsi_perawatan():
-    tampilkan_tabel()  
+    tampilkan_tabel()  # Menampilkan tabel bibit
     try:
         nomor_bibit = int(input("Masukkan nomor bibit untuk melihat deskripsi perawatan: "))
         if 1 <= nomor_bibit <= len(jenis_bibit):
@@ -168,11 +168,12 @@ def tampilkan_deskripsi_perawatan():
                             break
             if not found:
                 print(f"Deskripsi perawatan untuk '{nama_bibit}' belum tersedia.")
-            kembali = input("\nKetik 'ya' jika ingin kembali: ").lower().strip()
-            if kembali == 'ya':
-                menu_pengguna()
+            
+            pilihan = input("\nApakah Anda ingin melihat deskripsi perawatan bibit lain? (ya/tidak): ").lower().strip()
+            if pilihan == 'ya':
+                tampilkan_deskripsi_perawatan()
             else:
-                print("Input tidak valid. Kembali ke menu pengguna.")
+                print("Kembali ke menu pengguna.")
                 menu_pengguna()
         else:
             print("Nomor bibit tidak valid. Silakan coba lagi.")
@@ -263,11 +264,12 @@ def membeli():
         return
     for item in transaksi :
         laporan_pembelian_pengguna.append({
-        "Nama Pembeli"   : nama_pengguna,
-        "Jenis Bibit"    : item[0],
-        "Kualitas"       : item[1],
-        "Kuantitas"      : item[2],
-        "Total Pembelian": item[4],
+        "Nama Pembeli"                   : nama_pengguna,
+        "Jenis Bibit"                    : item[0],
+        "Kualitas"                       : item[1],
+        "Kuantitas"                      : item[2],
+        "Total Pembelian"                : total_pembelian,
+        "Total Pembelian Setelah Diskon" : item[4]
     })
     with open("struk_pembelian.csv", "w", newline="") as file:
         writer = csv.writer(file)
@@ -524,22 +526,37 @@ def hapus_bibit():
 def laporan_pembelian():
     if not laporan_pembelian_pengguna:
         print("Belum ada transaksi yang dilakukan.")
-        return
+        return        
+
     print("="*115)
     print("Laporan Pembelian".center(115))
     print("="*115)
-    print("+----------------+-------------+----------+------------+-----------------+")
-    print("| Nama Pembeli   | Jenis Bibit | Kualitas | Kuantitas  | Total Pembelian |")
-    print("+----------------+-------------+----------+------------+-----------------+")
-    total_pembelian=0
+    print("+----------------+-------------+----------+------------+-----------------+--------------------------------+")
+    print("| Nama Pembeli   | Jenis Bibit | Kualitas | Kuantitas  | Total Pembelian | Total Pembelian Setelah Diskon |")
+    print("+----------------+-------------+----------+------------+-----------------+--------------------------------+")
+    pengelompokkan_nama_pembeli = {}
     for pembelian in laporan_pembelian_pengguna:
-        print("| {:<14} | {:<11} | {:<8} | {:<10} | {:<15} |".format(
-            pembelian["Nama Pembeli"], pembelian["Jenis Bibit"],
-            pembelian["Kualitas"], pembelian["Kuantitas"],
-            pembelian["Total Pembelian"]))
-        total_pembelian += pembelian["Total Pembelian"]
-    print("+----------------+-------------+----------+------------+-----------------+")
+        nama = pembelian["Nama Pembeli"]
+        if nama not in pengelompokkan_nama_pembeli:
+           pengelompokkan_nama_pembeli[nama] = []
+        pengelompokkan_nama_pembeli[nama].append(pembelian)
+
+    total_pembelian=0
+    total_pembelian_setelah_diskon=0
+    for nama, pembelian_list in pengelompokkan_nama_pembeli.items():
+        pertama = True
+        for pembelian in pembelian_list:
+            print("| {:<14} | {:<11} | {:<8} | {:<10} | {:<15} | {:<30} |".format(
+                nama if pertama else "", 
+                pembelian["Jenis Bibit"], pembelian["Kualitas"],
+                pembelian["Kuantitas"], pembelian["Total Pembelian"], pembelian["Total Pembelian Setelah Diskon"]))
+            pertama = False 
+            total_pembelian += pembelian["Total Pembelian"]
+            total_pembelian_setelah_diskon += pembelian["Total Pembelian Setelah Diskon"]
+    print("+----------------+-------------+----------+------------+-----------------+--------------------------------+")
     print(f"Total pembelian bibit : Rp{total_pembelian:}")
+    print(f"Total pembelian bibit setelah diskon : Rp{total_pembelian_setelah_diskon}")
+
     df_pembelian = pd.DataFrame(laporan_pembelian_pengguna)
     df_pembelian.to_csv("Laporan Pembelian.csv", index=False)
     df_pembelian = pd.read_csv("Laporan Pembelian.csv")
