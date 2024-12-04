@@ -374,44 +374,6 @@ def lihat_deskripsi():
             print(f"{index:<5} {row[0]:<20} {row[1]:<25}")
     print("=" * 50)
 
-def hapus_deskripsi():
-    while True:
-        lihat_deskripsi()  
-        nomor_input = input("Masukkan nomor deskripsi yang ingin dihapus: ")
-        try:
-            nomor = int(nomor_input)
-        except ValueError:
-            print("Input tidak valid. Harap masukkan nomor yang benar.")
-            continue
-        rows = []
-        found = False
-        try:
-            with open('deskripsi_produk.csv', mode='r') as file:
-                reader = csv.reader(file)
-                for index, row in enumerate(reader, start=1):
-                    if index == nomor:
-                        found = True  
-                        print(f"Deskripsi untuk '{row[0]}' telah dihapus.")
-                        continue  
-                    rows.append(row)
-        except FileNotFoundError:
-            print("File deskripsi_produk.csv tidak ditemukan.")
-            return
-        if not found:
-            print("Nomor deskripsi tidak valid. Tidak ada yang dihapus.")
-        else:
-            with open('deskripsi_produk.csv', mode='w', newline='') as file:
-                writer = csv.writer(file)
-                writer.writerows(rows)
-            print("\nTabel deskripsi setelah penghapusan:")
-            lihat_deskripsi()  
-        lagi = input("\nApakah Anda ingin menghapus deskripsi lain? (ya/tidak): ").lower()
-        if lagi == 'tidak':
-            print("Kembali ke menu admin.")
-            break
-        elif lagi != 'ya':
-            print("Input tidak valid. Harap masukkan 'ya' atau 'tidak'.")
-
 def tambah_deskripsi():
     tampilkan_tabel()  
     try:
