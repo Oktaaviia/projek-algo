@@ -268,8 +268,8 @@ def membeli():
         "Jenis Bibit"                    : item[0],
         "Kualitas"                       : item[1],
         "Kuantitas"                      : item[2],
-        "Total Pembelian"                : total_pembelian,
-        "Total Pembelian Setelah Diskon" : item[4]
+        "Total Pembelian"                : item[4],
+        "Total Pembelian Setelah Diskon" : total_setelah_diskon
     })
     with open("struk_pembelian.csv", "w", newline="") as file:
         writer = csv.writer(file)
