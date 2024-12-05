@@ -38,7 +38,8 @@ def registrasi():
                 print("\n===========| Berhasil Membuat Akun Baru |==========")
         elif Hasil == False :
            input('\nMaaf Nama sudah digunakan, Enter untuk coba lagi !')
-           registrasi()    
+           registrasi()
+            return
 
 user_csv= 'pengguna.csv'
 def init_user_file():
