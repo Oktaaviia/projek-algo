@@ -36,10 +36,10 @@ def registrasi():
                 csvtambah1 = csv.writer(f)
                 csvtambah1.writerow([nama,password,'user'])
                 print("\n===========| Berhasil Membuat Akun Baru |==========")
+               main_menu()
         elif Hasil == False :
            input('\nMaaf Nama sudah digunakan, Enter untuk coba lagi !')
            registrasi()
-            return
 
 user_csv= 'pengguna.csv'
 def init_user_file():
