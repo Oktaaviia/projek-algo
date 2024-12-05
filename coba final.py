@@ -268,8 +268,7 @@ def membeli():
         "Jenis Bibit"                    : item[0],
         "Kualitas"                       : item[1],
         "Kuantitas"                      : item[2],
-        "Total Pembelian"                : item[4],
-        "Total Pembelian Setelah Diskon" : total_setelah_diskon
+        "Total Pembelian"                : item[4]
     })
     with open("struk_pembelian.csv", "w", newline="") as file:
         writer = csv.writer(file)
@@ -531,9 +530,9 @@ def laporan_pembelian():
     print("="*115)
     print("Laporan Pembelian".center(115))
     print("="*115)
-    print("+----------------+-------------+----------+------------+-----------------+--------------------------------+")
-    print("| Nama Pembeli   | Jenis Bibit | Kualitas | Kuantitas  | Total Pembelian | Total Pembelian Setelah Diskon |")
-    print("+----------------+-------------+----------+------------+-----------------+--------------------------------+")
+    print("+----------------+-------------+----------+------------+-----------------+")
+    print("| Nama Pembeli   | Jenis Bibit | Kualitas | Kuantitas  | Total Pembelian |")
+    print("+----------------+-------------+----------+------------+-----------------+")
     pengelompokkan_nama_pembeli = {}
     for pembelian in laporan_pembelian_pengguna:
         nama = pembelian["Nama Pembeli"]
@@ -542,20 +541,17 @@ def laporan_pembelian():
         pengelompokkan_nama_pembeli[nama].append(pembelian)
 
     total_pembelian=0
-    total_pembelian_setelah_diskon=0
     for nama, pembelian_list in pengelompokkan_nama_pembeli.items():
         pertama = True
         for pembelian in pembelian_list:
-            print("| {:<14} | {:<11} | {:<8} | {:<10} | {:<15} | {:<30} |".format(
+            print("| {:<14} | {:<11} | {:<8} | {:<10} | {:<15} |".format(
                 nama if pertama else "", 
                 pembelian["Jenis Bibit"], pembelian["Kualitas"],
-                pembelian["Kuantitas"], pembelian["Total Pembelian"], pembelian["Total Pembelian Setelah Diskon"]))
+                pembelian["Kuantitas"], pembelian["Total Pembelian"],))
             pertama = False 
             total_pembelian += pembelian["Total Pembelian"]
-            total_pembelian_setelah_diskon += pembelian["Total Pembelian Setelah Diskon"]
-    print("+----------------+-------------+----------+------------+-----------------+--------------------------------+")
+    print("+----------------+-------------+----------+------------+-----------------+")
     print(f"Total pembelian bibit : Rp{total_pembelian:}")
-    print(f"Total pembelian bibit setelah diskon : Rp{total_pembelian_setelah_diskon}")
 
     df_pembelian = pd.DataFrame(laporan_pembelian_pengguna)
     df_pembelian.to_csv("Laporan Pembelian.csv", index=False)
