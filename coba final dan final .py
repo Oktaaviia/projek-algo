@@ -311,7 +311,8 @@ def membeli():
         "Jenis Bibit"                    : item[0],
         "Kualitas"                       : item[1],
         "Kuantitas"                      : item[2],
-        "Total Pembelian"                : item[4]
+        "Harga Pembelian"                : item[4],
+        "Harga Pembelian Setelah Diskon" : total_setelah_diskon
     })
     with open("struk_pembelian.csv", "w", newline="") as file:
         writer = csv.writer(file)
@@ -578,7 +579,6 @@ def hapus_bibit():
         print("Masukkan nomor bibit yang valid.")
 
 def laporan_pembelian():
-    os.system("cls")
     if not laporan_pembelian_pengguna:
         print("Belum ada transaksi yang dilakukan.")
         return        
@@ -586,28 +586,24 @@ def laporan_pembelian():
     print("="*115)
     print("Laporan Pembelian".center(115))
     print("="*115)
-    print("+----------------+-------------+----------+------------+-----------------+")
-    print("| Nama Pembeli   | Jenis Bibit | Kualitas | Kuantitas  | Total Pembelian |")
-    print("+----------------+-------------+----------+------------+-----------------+")
-    pengelompokkan_nama_pembeli = {}
-    for pembelian in laporan_pembelian_pengguna:
-        nama = pembelian["Nama Pembeli"]
-        if nama not in pengelompokkan_nama_pembeli:
-           pengelompokkan_nama_pembeli[nama] = []
-        pengelompokkan_nama_pembeli[nama].append(pembelian)
-
+    print("+----------------+-------------+----------+------------+-----------------+--------------------------------+")
+    print("| Nama Pembeli   | Jenis Bibit | Kualitas | Kuantitas  | Harga Pembelian | Harga Pembelian Setelah Diskon |")
+    print("+----------------+-------------+----------+------------+-----------------+--------------------------------+")
     total_pembelian=0
-    for nama, pembelian_list in pengelompokkan_nama_pembeli.items():
-        pertama = True
-        for pembelian in pembelian_list:
-            print("| {:<14} | {:<11} | {:<8} | {:<10} | {:<15} |".format(
-                nama if pertama else "", 
-                pembelian["Jenis Bibit"], pembelian["Kualitas"],
-                pembelian["Kuantitas"], pembelian["Total Pembelian"],))
-            pertama = False 
-            total_pembelian += pembelian["Total Pembelian"]
-    print("+----------------+-------------+----------+------------+-----------------+")
-    print(f"Total pembelian bibit : Rp{total_pembelian:}")
+    total_pembelian_setelah_diskon=0
+    for pembelian in laporan_pembelian_pengguna:
+        print("| {:<14} | {:<11} | {:<8} | {:<10} | {:<15} | {:<30} |".format(
+            pembelian["Nama Pembeli"], pembelian["Jenis Bibit"],
+            pembelian["Kualitas"], pembelian["Kuantitas"],
+            pembelian["Harga Pembelian"],pembelian["Harga Pembelian Setelah Diskon"]))
+        
+        total_pembelian += pembelian["Harga Pembelian"]
+        total_pembelian_setelah_diskon += pembelian["Harga Pembelian Setelah Diskon"]
+    
+    print("+----------------+-------------+----------+------------+-----------------+--------------------------------+")
+    print(f"| Total Keseluruhan Pembelian :           |            |Rp{total_pembelian:,.0f}        | Rp{total_pembelian_setelah_diskon:,.0f}                      |")
+    print("="*115)
+
 
     df_pembelian = pd.DataFrame(laporan_pembelian_pengguna)
     df_pembelian.to_csv("Laporan Pembelian.csv", index=False)
