@@ -471,4 +471,4 @@ def laporan_pembelian():
 
 if __name__ == "__main__":
     baca_stok()
-    main_menu()
+main_menu()
