@@ -22,6 +22,9 @@ def registrasi():
         if not nama.isalpha():
             print("Nama harus berupa huruf")
             continue
+        if nama == 'petani' and password == '24240' :
+            print ("Nama  sudah ada. Buat nama lain")
+            continue
         Hasil = False
         with open('pengguna.csv','r') as r:
          reader = csv.reader(r)
@@ -36,17 +39,16 @@ def registrasi():
                 csvtambah1 = csv.writer(f)
                 csvtambah1.writerow([nama,password,'user'])
                 print("\n===========| Berhasil Membuat Akun Baru |==========")
-               main_menu()
+                main_menu()
         elif Hasil == False :
            input('\nMaaf Nama sudah digunakan, Enter untuk coba lagi !')
-           registrasi()
+           registrasi()    
 
 user_csv= 'pengguna.csv'
 def init_user_file():
     if not os.path.exists(user_csv):
         with open(user_csv, 'w', newline='') as file:
             writer = csv.writer(file)
-            # Menambahkan akun admin
             writer.writerow(['petani', '24240'])
 
 def admin_login():
@@ -83,10 +85,9 @@ def user_login():
             print(f"Nama '{nama}' tidak ditemukan. Anda belum melakukan registrasi.")
             return None
 
-
 def main_menu():
     cetak_selamat_datang()
-    init_user_file()  # Inisialisasi file pengguna jika belum ada
+    init_user_file()  
     while True:
         print("\nMenu:")
         print("[1] Login Admin")
@@ -115,6 +116,7 @@ harga_standar = [20000, 25000, 18000, 22000, 24000, 26000]
 harga_premium = [harga + 5000 for harga in harga_standar]
 stok_standar = [30, 25, 40, 35, 50, 20]
 stok_premium = [20, 15, 35, 30, 40, 25]
+
 garis = "+-----+-------------+--------------+--------------+--------------+--------------+"
 
 bibit_csv = "data_bibit.csv"
@@ -141,14 +143,12 @@ ulasan_list=[]
 nama_pembelian_csv = 'riwayat_pembelian.csv'
 
 def menu_pengguna():
-    os.system("cls")
     print("=" * 50,"Menu Pengguna","=" *50)
     print("1. Lihat Daftar Harga Bibit")
     print("2. Membeli")
     print("3. Riwayat Pembelian")
-    print("4. Deskripsi Perawatan Tanaman")
-    print("5. Keluar")
-    pilihan = input("Pilih menu (1/2/3/4/5): ")
+    print("4. Keluar")
+    pilihan = input("Pilih menu (1/2/3/4): ")
     if pilihan == '1':
         lihat_daftar_harga()
     elif pilihan == '2':
@@ -156,8 +156,6 @@ def menu_pengguna():
     elif pilihan == '3':
         lihat_riwayat_pembelian()
     elif pilihan == '4':
-        tampilkan_deskripsi_perawatan()
-    elif pilihan == '5':
         print("Terima kasih telah menggunakan layanan kami!")
         main_menu()
     else:
@@ -190,39 +188,7 @@ def lihat_riwayat_pembelian():
     else:
         print("Input tidak valid. Ketik 'ya' untuk kembali.")
         lihat_riwayat_pembelian()
-        
-def tampilkan_deskripsi_perawatan():
-    os.system("cls")
-    tampilkan_tabel()  # Menampilkan tabel bibit
-    try:
-        nomor_bibit = int(input("Masukkan nomor bibit untuk melihat deskripsi perawatan: "))
-        if 1 <= nomor_bibit <= len(jenis_bibit):
-            nama_bibit = jenis_bibit[nomor_bibit - 1]
-            found = False
-            if os.path.exists('deskripsi_produk.csv'):
-                with open('deskripsi_produk.csv', mode='r') as file:
-                    reader = csv.reader(file)
-                    for row in reader:
-                        if row[0].lower() == nama_bibit.lower():
-                            print(f"\nDeskripsi perawatan untuk '{row[0]}': {row[1]}")
-                            found = True
-                            break
-            if not found:
-                print(f"Deskripsi perawatan untuk '{nama_bibit}' belum tersedia.")
-            
-            pilihan = input("\nApakah Anda ingin melihat deskripsi perawatan bibit lain? (ya/tidak): ").lower().strip()
-            if pilihan == 'ya':
-                tampilkan_deskripsi_perawatan()
-            else:
-                print("Kembali ke menu pengguna.")
-                menu_pengguna()
-        else:
-            print("Nomor bibit tidak valid. Silakan coba lagi.")
-            tampilkan_deskripsi_perawatan()
-    except ValueError:
-        print("Input harus berupa angka. Silakan coba lagi.")
-        tampilkan_deskripsi_perawatan()
-        
+
 def simpan_pembelian(bibit, kualitas, kuantitas, total_harga):
     with open(nama_pembelian_csv, mode='a', newline='') as file:
         writer = csv.writer(file)
@@ -279,7 +245,7 @@ def membeli():
             kuantitas = int(input(f"Masukkan jumlah bibit yang ingin dibeli (stok tersedia: {stok[pilihan_bibit - 1]}): "))
             if kuantitas <= 0 or kuantitas > stok[pilihan_bibit - 1]:
                 print("Kuantitas tidak valid, silahkan coba lagi.")
-                continue
+                break
         except ValueError:
             print("Masukkan jumlah yang valid, silahkan coba lagi.")
             continue
@@ -298,14 +264,14 @@ def membeli():
         pembayaran = int(input(f"Total belanja Anda: Rp {total_setelah_diskon:,}\nMasukkan jumlah uang: Rp "))
         if pembayaran < total_setelah_diskon:
             print("Uang anda tidak cukup. Transaksi dibatalkan.")
-            membeli()
-        else : 
-            transaksi.append((nama_bibit, kualitas, kuantitas, harga_bibit, total_harga_bibit))
+            membeli()  
+        else: 
             stok[pilihan_bibit - 1] -= kuantitas 
-        kembalian = pembayaran - total_setelah_diskon
+            transaksi.append((nama_bibit, kualitas, kuantitas, harga_bibit, total_harga_bibit))
     except ValueError:
         print("Masukkan jumlah yang valid. Transaksi dibatalkan.")
         membeli()
+
     for item in transaksi :
         laporan_pembelian_pengguna.append({
         "Nama Pembeli"                   : nama_pengguna,
@@ -326,11 +292,14 @@ def membeli():
         writer.writerow(["Diskon", "", "", "", f"Rp {jumlah_diskon:,}"])
         writer.writerow(["Total Bayar", "", "", "", f"Rp {total_setelah_diskon:,}"])
         writer.writerow(["Pembayaran", "", "", "", f"Rp {pembayaran:,}"])
+        kembalian = pembayaran - total_setelah_diskon
         writer.writerow(["Kembalian", "", "", "", f"Rp {kembalian:,}"])
 
     df_pembelian = pd.DataFrame(laporan_pembelian_pengguna)
     df_pembelian.to_csv("laporan_pembelian_pengguna.csv", index=False)
+
     simpan_pembelian(nama_bibit, kualitas, kuantitas, total_harga_bibit)
+    simpan_stok()
 
     print("="*47)
     print("|                STRUK PEMBELIAN              |")
@@ -346,18 +315,37 @@ def membeli():
     print(f"Uang Anda        : Rp {pembayaran:,}")
     print(f"Kembalian        : Rp {kembalian:,}")
     print("="*47)
-    ada_ulasan ()
+
+    ada_ulasan()
+def simpan_stok():
+    with open("data_bibit.csv", 'w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(["No", "Jenis Bibit", "Harga Standar", "Stok Standar", "Harga Premium", "Stok Premium"])
+        for i in range(len(jenis_bibit)):
+            writer.writerow([i + 1, jenis_bibit[i], harga_standar[i], stok_standar[i], harga_premium[i], stok_premium[i]])
+
+def baca_stok():
+    global stok_standar, stok_premium
+    if os.path.exists("data_bibit.csv"):
+        with open("data_bibit.csv", 'r') as file:
+            reader = csv.reader(file)
+            next(reader)  
+            for row in reader:
+                index = int(row[0]) - 1
+                stok_standar[index] = int(row[3])
+                stok_premium[index] = int(row[5])
 
 def ada_ulasan () : 
     ulasan = input("Apakah Anda ingin memberikan ulasan? (Ya/Tidak): ").lower()
     if ulasan == 'ya':
         isi_ulasan = input("Masukkan ulasan Anda: ")
         if not isi_ulasan.strip():
-            print("ulasan tidak boleh kosong bro")
+            print("ulasan tidak boleh kosong.")
             ada_ulasan()
-        ulasan_list.append({"nama": nama_pengguna, "ulasan": isi_ulasan})
-        print("Ulasan berhasil ditambahkan!")
-        menu_pengguna ()
+        else:
+            ulasan_list.append({"nama": nama_pengguna, "ulasan": isi_ulasan})
+            print("Ulasan berhasil ditambahkan!")
+            menu_pengguna ()
     elif ulasan == 'tidak' : 
         print ("Terimakasih Sudah Membeli Produk Kami!")
         menu_pengguna ()
@@ -366,14 +354,12 @@ def ada_ulasan () :
         ada_ulasan()
 
 def menu_admin():
-    os.system("cls")
     print("\n=== Menu Admin ===")
     print("1. Update Daftar Bibit")
     print("2. Laporan Pembelian")
     print("3. Lihat Ulasan")
-    print("4. Deskripsi Perawatan")
-    print("5. Keluar")
-    pilihan = input("Pilih menu (1/2/3/4/5): ")
+    print("4. Keluar")
+    pilihan = input("Pilih menu (1/2/3/4): ")
     if pilihan == "1": 
         menu_update()
     elif pilihan == "2":    
@@ -381,135 +367,13 @@ def menu_admin():
     elif pilihan == "3":
         lihat_ulasan()
     elif pilihan == "4":
-        lihat_deskripsi_bibit()
-    elif pilihan == "5":
         os.system("cls")
         main_menu() 
     else: 
         print("Pilihan tidak tersedia. Silahkan coba lagi!")
     menu_admin()
 
-def lihat_deskripsi_bibit():
-    os.system("cls")
-    print("\n=== Menu Admin ===")
-    print("1. Tambah Deskripsi")
-    print("2. Hapus Deskripsi")
-    print("3. Lihat Deskripsi")
-    print("4. Keluar")
-    pilihan = input("Pilih menu (1/2/3): ")
-    if pilihan == "1": 
-        tambah_deskripsi()
-    elif pilihan == "2":    
-        hapus_deskripsi()   
-    elif pilihan == "3":
-        lihat_deskripsi()
-    elif pilihan == "4":
-        os.system("cls")
-        main_menu() 
-    else: 
-        print("Pilihan tidak tersedia. Silahkan coba lagi!")
-        menu_admin()
-
-def lihat_deskripsi():
-    os.system("cls")
-    if not os.path.exists('deskripsi_produk.csv'):
-        print("Belum ada deskripsi yang tersedia.")
-        return
-    print("=" * 115)
-    print("Deskripsi Bibit".center(115))
-    print("=" * 115)
-    with open('deskripsi_produk.csv', mode='r') as file:
-        reader = csv.reader(file)
-        print(f"{'No':<5} {'Nama Produk':<20} {'Deskripsi':<25}")
-        print("=" * 50)
-        for index, row in enumerate(reader, start=1):
-            print(f"{index:<5} {row[0]:<20} {row[1]:<25}")
-    print("=" * 50)
-
-def tambah_deskripsi():
-    os.system("cls")
-    tampilkan_tabel()  
-    try:
-        nomor_bibit = int(input("Masukkan nomor bibit untuk menambahkan deskripsi: "))
-        if nomor_bibit < 1 or nomor_bibit > len(jenis_bibit):
-            print("Nomor bibit tidak valid. Silakan coba lagi.")
-            return
-    except ValueError:
-        print("Input tidak valid. Harap masukkan nomor yang benar.")
-        return
-
-    nama_produk = jenis_bibit[nomor_bibit - 1]  
-    deskripsi = input(f"Masukkan deskripsi untuk '{nama_produk}': ")
-    rows = []
-    found = False
-    try:
-        with open('deskripsi_produk.csv', mode='r') as file:
-            reader = csv.reader(file)
-            for row in reader:
-                if row[0].lower() == nama_produk.lower():
-                    row[1] = deskripsi  
-                    found = True
-                rows.append(row)
-    except FileNotFoundError:
-        pass
-    if not found:
-        rows.append([nama_produk, deskripsi])  
-        print(f"Deskripsi baru untuk '{nama_produk}' berhasil ditambahkan!")
-    else:
-        print(f"Deskripsi untuk '{nama_produk}' berhasil diperbarui!")
-    with open('deskripsi_produk.csv', mode='w', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerows(rows)
-    while True:
-        lagi = input("\nApakah Anda ingin menambahkan deskripsi untuk bibit lain? (ya/tidak): ").lower()
-        if lagi == 'ya':
-            tambah_deskripsi()  
-            return
-        elif lagi == 'tidak':
-            break
-        else:
-            print("Input tidak valid. Harap masukkan 'ya' atau 'tidak'.")
-
-def hapus_deskripsi():
-    os.system("cls")
-    while True:
-        lihat_deskripsi()  
-        nomor_input = input("Masukkan nomor deskripsi yang ingin dihapus: ")
-        try:
-            nomor = int(nomor_input)
-        except ValueError:
-            print("Input tidak valid. Harap masukkan nomor yang benar.")
-            continue
-        rows = []
-        found = False
-        try:
-            with open('deskripsi_produk.csv', mode='r') as file:
-                reader = csv.reader(file)
-                for index, row in enumerate(reader, start=1):
-                    if index == nomor:
-                        found = True  
-                        print(f"Deskripsi untuk '{row[0]}' telah dihapus.")
-                        continue  
-                    rows.append(row)
-        except FileNotFoundError:
-            print("File deskripsi_produk.csv tidak ditemukan.")
-            return
-        if not found:
-            print("Nomor deskripsi tidak valid. Tidak ada yang dihapus.")
-        else:
-            with open('deskripsi_produk.csv', mode='w', newline='') as file:
-                writer = csv.writer(file)
-                writer.writerows(rows)
-            print("\nTabel deskripsi setelah penghapusan:")
-            lihat_deskripsi()  
-        lagi = input("\nApakah Anda ingin menghapus deskripsi lain? (ya/tidak): ").lower()
-        if lagi == 'tidak':
-            break
-        elif lagi != 'ya':
-            print("Input tidak valid. Harap masukkan 'ya' atau 'tidak'.")
-
 def lihat_ulasan():
-    os.system("cls")
     if not ulasan_list:
         print("Belum ada ulasan.")
     else:
@@ -521,7 +385,6 @@ def lihat_ulasan():
         print("=" * 40)
 
 def menu_update():
-    os.system("cls")
     while True:
         print("\nMenu Update:")
         print("1. Tambah Bibit")
@@ -539,7 +402,6 @@ def menu_update():
             print("Pilihan tidak valid. Silakan pilih menu yang benar.")
 
 def tambah_bibit():
-    os.system("cls")
     while True:
         nama_bibit = str(input("Masukkan nama bibit baru: "))
         if not nama_bibit.isalpha() or not nama_bibit.strip():
@@ -563,7 +425,6 @@ def tambah_bibit():
         break
 
 def hapus_bibit():
-    os.system("cls")
     tampilkan_tabel()
     try:
         no_bibit = int(input("Masukkan nomor bibit yang ingin dihapus: "))
@@ -583,7 +444,6 @@ def laporan_pembelian():
     if not laporan_pembelian_pengguna:
         print("Belum ada transaksi yang dilakukan.")
         return        
-
     print("="*115)
     print("Laporan Pembelian".center(115))
     print("="*115)
@@ -605,10 +465,10 @@ def laporan_pembelian():
     print(f"| Total Keseluruhan Pembelian :           |            |Rp{total_pembelian:,.0f}        | Rp{total_pembelian_setelah_diskon:,.0f}                      |")
     print("="*115)
 
-
     df_pembelian = pd.DataFrame(laporan_pembelian_pengguna)
     df_pembelian.to_csv("Laporan Pembelian.csv", index=False)
     df_pembelian = pd.read_csv("Laporan Pembelian.csv")
 
 if __name__ == "__main__":
+    baca_stok()
     main_menu()
