@@ -11,79 +11,78 @@ def cetak_selamat_datang():
     print("Jangan lupa untuk registrasi terlebih dahulu jika belum mempunyai akun ya!".center(115))
     print("=== Silahkan pilih menu di bawah ini ya! ===".center(115))
 
-def registrasi():
-    print("=" * 54,"Registrasi","=" *54)
-    while True:
-        nama = str(input('Masukkan nama anda: ')).strip().lower()
-        password = input('Masukkan PIN (5 digit): ')
-        if len(password) != 5 or not password.isdigit():
-            print('PIN harus terdiri dari 5 digit angka.')
-            continue 
-        if not nama.isalpha():
-            print("Nama harus berupa huruf")
-            continue
-        if nama == 'petani' and password == '24240' :
-            print ("Nama  sudah ada. Buat nama lain")
-            continue
-        Hasil = False
-        with open('pengguna.csv','r') as r:
-         reader = csv.reader(r)
-         for x in reader:
-           if x[0] == nama :
-             Hasil = False
-             break
-           else:
-               Hasil = True
-        if Hasil == True:
-           with open('pengguna.csv', 'a', newline="") as f:
-                csvtambah1 = csv.writer(f)
-                csvtambah1.writerow([nama,password,'user'])
-                print("\n===========| Berhasil Membuat Akun Baru |==========")
-                main_menu()
-        elif Hasil == False :
-           input('\nMaaf Nama sudah digunakan, Enter untuk coba lagi !')
-           registrasi()    
+user_csv = 'pengguna.csv'
 
-user_csv= 'pengguna.csv'
 def init_user_file():
     if not os.path.exists(user_csv):
         with open(user_csv, 'w', newline='') as file:
             writer = csv.writer(file)
-            writer.writerow(['petani', '24240'])
+            writer.writerow(['nama', 'password', 'role'])
+            writer.writerow(['petani', '24240', 'admin'])
+
+def registrasi():
+    print("=" * 54, "Registrasi", "=" * 54)
+    while True:
+        nama = input('Masukkan nama anda: ').strip().lower()
+        password = input('Masukkan PIN (5 digit): ')
+
+        if len(password) != 5 or not password.isdigit():
+            print('PIN harus terdiri dari 5 digit angka.')
+            continue
+        if not nama.isalpha():
+            print("Nama harus berupa huruf.")
+            continue
+
+        with open(user_csv, 'r') as file:
+            reader = csv.reader(file)
+            for row in reader:
+                if row[0] == nama:
+                    print("Nama sudah digunakan. Buat nama lain.")
+                    break
+            else:
+                with open(user_csv, 'a', newline='') as file:
+                    writer = csv.writer(file)
+                    writer.writerow([nama, password, 'user'])
+                print("\n===========| Berhasil Membuat Akun Baru |==========")
+                return
 
 def admin_login():
     print("=" * 54, "Login Admin", "=" * 54)
     while True:
-        nama = input('Masukkan nama admin: ').strip().lower()  
+        nama = input('Masukkan nama admin: ').strip().lower()
         password = input('Masukkan PIN: ')
 
         if nama == 'petani' and password == '24240':
             print("Login admin berhasil!")
             menu_admin()
+            return
         else:
             print("Nama atau PIN salah. Silakan coba lagi.")
 
 def user_login():
     global nama_pengguna
     print("=" * 54, "Login User", "=" * 54)
+
     if not os.path.exists(user_csv):
         print("Anda belum melakukan registrasi. Silakan registrasi terlebih dahulu.")
-        return None
+        return
+
     while True:
-        nama = input('Masukkan nama anda: ').strip().lower()  
+        nama = input('Masukkan nama anda: ').strip().lower()
         password = input('Masukkan PIN: ')
+
         with open(user_csv, 'r') as file:
             reader = csv.reader(file)
             for row in reader:
-                if row[0] == nama:
-                    if row[1] == password:
-                        print(f"Login berhasil! Selamat datang, {nama}.")
-                        nama_pengguna = nama
-                        menu_pengguna() 
-                    print("PIN salah. Silakan coba lagi.")
-                    return None  
-            print(f"Nama '{nama}' tidak ditemukan. Anda belum melakukan registrasi.")
-            return None
+                if len(row) < 2:  
+                    continue
+                if row[0] == nama and row[1] == password:
+                    print(f"Login berhasil! Selamat datang, {nama}.")
+                    nama_pengguna = nama
+                    menu_pengguna()
+                    return  
+
+            print("Nama atau PIN salah. Silakan coba lagi.")
 
 def main_menu():
     cetak_selamat_datang()
