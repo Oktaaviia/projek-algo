@@ -176,7 +176,7 @@ def lihat_daftar_harga ():
     os.system("cls")
     while True:
         tampilkan_tabel ()
-        kembali = input("\nKetik 'ya' jika ingin kembali: ").lower()
+        kembali = input("\nKetik 'ya' jika ingin kembali: ").lower().strip()
         if kembali == 'ya':
            menu_pengguna ()
         else:
