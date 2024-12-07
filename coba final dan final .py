@@ -328,8 +328,6 @@ def baca_stok():
     global stok_standar, stok_premium
     if os.path.exists("data_bibit.csv"):
         with open("data_bibit.csv", 'r') as file:
-            reader = csv.reader(file)
-            next(reader)  
             for row in reader:
                 index = int(row[0]) - 1
                 stok_standar[index] = int(row[3])
