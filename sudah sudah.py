@@ -317,7 +317,6 @@ def baca_stok():
     if os.path.exists("data_bibit.csv"):
         with open("data_bibit.csv", 'r') as file:
             reader = csv.reader(file)
-            next(reader)
             stok_standar = []
             stok_premium = []
             for row in reader:
