@@ -132,11 +132,6 @@ def tampilkan_tabel():
             i + 1, jenis_bibit[i], harga_standar[i], stok_standar[i], harga_premium[i], stok_premium[i]))
     print(garis)
 
-nama_pengguna = None
-laporan_pembelian_pengguna=[]
-ulasan_list=[]
-nama_pembelian_csv = 'riwayat_pembelian.csv'
-
 def menu_pengguna():
     print("=" * 50,"Menu Pengguna","=" *50)
     print("1. Lihat Daftar Harga Bibit")
@@ -157,44 +152,6 @@ def menu_pengguna():
         print("Pilihan tidak valid. Silakan coba lagi!")
         menu_pengguna ()
 
-def lihat_riwayat_pembelian():
-    os.system("cls")
-    print("-" * 46, "Riwayat Pembelian", "-" * 46)
-    if not os.path.exists(nama_pembelian_csv):
-        print("Anda belum melakukan pembelian.")
-        kembali = input("\nKetik 'ya' jika ingin kembali: ").lower().strip()
-        if kembali == 'ya':
-            menu_pengguna()
-            return 
-        else:
-            print("Input tidak valid. Ketik 'ya' untuk kembali.")
-            lihat_riwayat_pembelian()
-    with open(nama_pembelian_csv, mode='r',) as file:
-        reader = csv.reader(file)
-        print(f"{'Nama Pengguna':<15} {'Bibit':<15} {'Kualitas':<15} {'Kuantitas':<10} {'Total Harga':<15}")
-        print("-" * 115)
-        ada_data = False
-        for row in reader:
-            if row[0] == nama_pengguna:
-                ada_data = True
-                print(f"{row[0]:<15} {row[1]:<15} {row[2]:<15} {row[3]:<10} {row[4]:<15}")
-
-        if not ada_data:
-            print("Anda belum melakukan pembelian.")
-        
-    print("=" * 115)
-    kembali = input("\nKetik 'ya' jika ingin kembali: ").lower().strip()
-    if kembali == 'ya':
-        menu_pengguna()
-    else:
-        print("Input tidak valid. Ketik 'ya' untuk kembali.")
-        lihat_riwayat_pembelian()
-
-def simpan_pembelian(bibit, kualitas, kuantitas, total_harga):
-    with open(nama_pembelian_csv, mode='a', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow([nama_pengguna, bibit, kualitas, kuantitas, total_harga])
-
 def lihat_daftar_harga ():
     os.system("cls")
     while True:
@@ -205,6 +162,8 @@ def lihat_daftar_harga ():
         else:
             print("Input tidak valid. Silakan tekan 'ya' untuk kembali.")
 
+nama_pengguna = None
+laporan_pembelian_pengguna=[]
 def membeli():
     os.system("cls")
     tampilkan_tabel()
@@ -333,6 +292,12 @@ def baca_stok():
                 stok_standar[index] = int(row[3])
                 stok_premium[index] = int(row[5])
 
+def simpan_pembelian(bibit, kualitas, kuantitas, total_harga):
+    with open(nama_pembelian_csv, mode='a', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow([nama_pengguna, bibit, kualitas, kuantitas, total_harga])
+
+ulasan_list=[]
 def ada_ulasan():
     ulasan = input("Apakah Anda ingin memberikan ulasan? (Ya/Tidak): ").lower()
     if ulasan == 'ya':
@@ -367,6 +332,40 @@ def simpan_ulasan_ke_csv(ulasan):
         if not file_exists:
             writer.writerow(["Nama Pengguna", "Ulasan"])
         writer.writerow([ulasan["nama"], ulasan["ulasan"]])
+
+nama_pembelian_csv = 'riwayat_pembelian.csv'
+def lihat_riwayat_pembelian():
+    os.system("cls")
+    print("-" * 46, "Riwayat Pembelian", "-" * 46)
+    if not os.path.exists(nama_pembelian_csv):
+        print("Anda belum melakukan pembelian.")
+        kembali = input("\nKetik 'ya' jika ingin kembali: ").lower().strip()
+        if kembali == 'ya':
+            menu_pengguna()
+            return 
+        else:
+            print("Input tidak valid. Ketik 'ya' untuk kembali.")
+            lihat_riwayat_pembelian()
+    with open(nama_pembelian_csv, mode='r',) as file:
+        reader = csv.reader(file)
+        print(f"{'Nama Pengguna':<15} {'Bibit':<15} {'Kualitas':<15} {'Kuantitas':<10} {'Total Harga':<15}")
+        print("-" * 115)
+        ada_data = False
+        for row in reader:
+            if row[0] == nama_pengguna:
+                ada_data = True
+                print(f"{row[0]:<15} {row[1]:<15} {row[2]:<15} {row[3]:<10} {row[4]:<15}")
+
+        if not ada_data:
+            print("Anda belum melakukan pembelian.")
+        
+    print("=" * 115)
+    kembali = input("\nKetik 'ya' jika ingin kembali: ").lower().strip()
+    if kembali == 'ya':
+        menu_pengguna()
+    else:
+        print("Input tidak valid. Ketik 'ya' untuk kembali.")
+        lihat_riwayat_pembelian()
 
 def menu_admin():
     os.system("cls")
