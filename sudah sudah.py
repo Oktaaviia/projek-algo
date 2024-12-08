@@ -536,7 +536,12 @@ def laporan_pembelian():
     if not os.path.exists(file_csv):
         print("Belum ada transaksi yang tercatat.")
         print("=" * 115)
-        input("\nTekan Enter untuk kembali ke menu admin...")
+        kembali = input("\nKetik 'ya' jika ingin kembali: ").lower().strip()
+        if kembali == 'ya':
+            menu_admin()
+        else:
+            print("Input tidak valid. Ketik 'ya' untuk kembali.")
+            laporan_pembelian()
         return
 
     try:
@@ -546,7 +551,12 @@ def laporan_pembelian():
         if not laporan_pembelian_pengguna:
             print("Belum ada transaksi yang tercatat.")
             print("=" * 115)
-            input("\nTekan Enter untuk kembali ke menu admin...")
+            kembali = input("\nKetik 'ya' jika ingin kembali: ").lower().strip()
+            if kembali == 'ya':
+               menu_admin()
+            else:
+                print("Input tidak valid. Ketik 'ya' untuk kembali.")
+                laporan_pembelian()
             return
         
         print("=" * 115)
