@@ -503,6 +503,24 @@ def simpan_data_bibit():
         for i in range(len(jenis_bibit)):
             writer.writerow([i + 1, jenis_bibit[i], harga_standar[i], stok_standar[i], harga_premium[i], stok_premium[i]])
 
+def baca_data_bibit():
+    global jenis_bibit, harga_standar, harga_premium, stok_standar, stok_premium
+    if os.path.exists(bibit_csv):
+        with open(bibit_csv, 'r') as file:
+            reader = csv.DictReader(file)
+            jenis_bibit = []
+            harga_standar = []
+            harga_premium = []
+            stok_standar = [] 
+            stok_premium = []
+            for row in reader:
+                if row:
+                    jenis_bibit.append(row['Jenis Bibit'])
+                    harga_standar.append(int(row['Harga Standar']))
+                    harga_premium.append(int(row['Harga Premium']))
+                    stok_standar.append(int(row['Stok Standar']))
+                    stok_premium.append(int(row['Stok Premium']))
+
 def laporan_pembelian():
     os.system("cls") 
     file_csv = "laporan_pembelian_pengguna.csv"
@@ -579,25 +597,6 @@ def lihat_ulasan():
     else:
         print("Input tidak valid. Ketik 'ya' untuk kembali.")
         lihat_ulasan()
-
-def baca_data_bibit():
-    global jenis_bibit, harga_standar, harga_premium, stok_standar, stok_premium
-    if os.path.exists(bibit_csv):
-        with open(bibit_csv, 'r') as file:
-            reader = csv.DictReader(file)
-            jenis_bibit = []
-            harga_standar = []
-            harga_premium = []
-            stok_standar = [] 
-            stok_premium = []
-            for row in reader:
-                if row:
-                    jenis_bibit.append(row['Jenis Bibit'])
-                    harga_standar.append(int(row['Harga Standar']))
-                    harga_premium.append(int(row['Harga Premium']))
-                    stok_standar.append(int(row['Stok Standar']))
-                    stok_premium.append(int(row['Stok Premium']))
-
 
 if __name__ == "__main__":
     baca_stok()
