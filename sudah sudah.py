@@ -11,7 +11,7 @@ def cetak_selamat_datang():
     print("Jangan lupa untuk registrasi terlebih dahulu jika belum mempunyai akun ya!".center(115))
     print("=== Silahkan pilih menu di bawah ini ya! ===".center(115))    
 
-def main_menu():
+def main():
     cetak_selamat_datang()
     init_user_file()  
     while True:
@@ -143,7 +143,7 @@ def menu_pengguna():
         lihat_riwayat_pembelian()
     elif pilihan == '4':
         print("Terima kasih telah menggunakan layanan kami!")
-        main_menu()
+        main()
     else:
         print("Pilihan tidak valid. Silakan coba lagi!")
         menu_pengguna ()
@@ -185,22 +185,16 @@ def lihat_daftar_harga ():
 nama_pengguna = None
 laporan_pembelian_pengguna=[]
 def membeli():
-    os.system("cls")
-    tampilkan_tabel()
     diskon = {200000: 0.03, 400000: 0.05, 600000: 0.07}
     total_pembelian = 0
     transaksi = []  
     if nama_pengguna is None:
         pass
     while True:
-        print("="*35)
-        print("|       MENU PEMBELIAN BIBIT      |")
-        print("="*35)
-        print("\tDaftar Jenis Bibit: ")
-        nomor = 1
-        for bibit in jenis_bibit:
-            print(f"\t{nomor}. {bibit}")
-            nomor += 1
+        print("="*81)
+        print("|                              MENU PEMBELIAN BIBIT                             |")
+        print("="*81)
+        tampilkan_tabel()
         try:
             pilihan_bibit = int(input("Pilih nomor jenis bibit yang ingin dibeli: "))
             if pilihan_bibit < 1 or pilihan_bibit > len(jenis_bibit):
@@ -223,12 +217,16 @@ def membeli():
             continue
         try:
             kuantitas = int(input(f"Masukkan jumlah bibit yang ingin dibeli (stok tersedia: {stok[pilihan_bibit - 1]}): "))
-            if kuantitas <= 0 or kuantitas > stok[pilihan_bibit - 1]:
-                print("Kuantitas tidak valid, silahkan coba lagi.")
-                break
+            if kuantitas <= 0:
+                print("Kuantitas harus lebih dari nol, silakan coba lagi.")
+                continue
+            if kuantitas > stok[pilihan_bibit - 1]:
+                print(f"Kuantitas yang diminta melebihi stok. Stok tersedia: {stok[pilihan_bibit - 1]} unit.")
+                continue
         except ValueError:
-            print("Masukkan jumlah yang valid, silahkan coba lagi.")
+            print("Masukkan jumlah yang valid, silakan coba lagi.")
             continue
+
         print(f"Bibit yang dibeli berupa {nama_bibit} dengan kualitas {kualitas} {kuantitas}")
         total_harga_bibit = harga_bibit * kuantitas
         total_pembelian += total_harga_bibit
@@ -250,7 +248,7 @@ def membeli():
             else:
                 print("Pilihan tidak valid. Silakan masukkan 'y' untuk melanjutkan atau 'n' untuk membatalkan.")
     try:
-        pembayaran = int(input(f"Total belanja Anda: Rp {total_setelah_diskon:,}\nMasukkan jumlah uang: Rp "))
+        pembayaran = int(input(f"Total belanja Anda: Rp {total_setelah_diskon:,}\nMasukkan jumlah uang (tanpa titik dan koma): Rp "))
         if pembayaran < total_setelah_diskon:
             print("Uang anda tidak cukup. Transaksi dibatalkan.")
             membeli()  
@@ -418,7 +416,7 @@ def menu_admin():
             lihat_ulasan()
         elif pilihan == "4":
             os.system("cls")
-            main_menu() 
+            main() 
         else: 
             print("Pilihan tidak tersedia. Silahkan coba lagi!")
 
@@ -493,6 +491,7 @@ def hapus_bibit():
                     writer.writerow([idx + 1, jenis_bibit[idx], harga_standar[idx], harga_premium[idx], stok_standar[idx], stok_premium[idx]])
 
             simpan_data_bibit()
+            tampilkan_tabel()
             print(f"Bibit nomor {no_bibit} berhasil dihapus!")
     except ValueError:
         print("Masukkan nomor bibit yang valid.")
@@ -603,4 +602,4 @@ def baca_data_bibit():
 if __name__ == "__main__":
     baca_stok()
     baca_data_bibit()
-    main_menu()
+    main()
